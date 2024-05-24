@@ -1,0 +1,31 @@
+version: "3"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: todo-list-backend
+    command: sh -c "./scripts/wait-for.sh todo-list-db:5432 && npm run dev"
+    depends_on:
+      - db
+    env_file: ./.env
+    environment:
+      - NODE_ENV=development
+      - SERVER_PORT=$APP_LOCAL_PORT
+    ports:
+      - $APP_LOCAL_PORT:3000
+  db:
+    image: postgres
+    restart: unless-stopped
+    container_name: todo-list-db
+    env_file: ./.env
+    environment:
+      - POSTGRES_USER=$POSTGRESDB_USER
+      - POSTGRES_PASSWORD=$POSTGRESDB_ROOT_PASSWORD
+      - POSTGRES_DB=$POSTGRESDB_DATABASE
+    ports:
+      - $POSTGRESDB_LOCAL_PORT:5432
+    volumes:
+      - db:/var/lib/postgres
+volumes: 
+  db:
