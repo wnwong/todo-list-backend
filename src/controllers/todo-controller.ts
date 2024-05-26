@@ -24,8 +24,8 @@ const getTodoList = async (req: Request, res: Response) => {
   const { app } = req
   const db = app.get('dbPool') as Pool
   try {
-    await TodoService.getTodoList(db)
-    return res.json({ status: 'success' })
+    const todoList = await TodoService.getTodoList(db)
+    return res.json({ status: 'success', data: todoList })
   } catch (e) {
     res.status(500)
     if (e instanceof Error) {

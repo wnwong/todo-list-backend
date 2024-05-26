@@ -10,7 +10,7 @@ export interface TodoItem {
 }
 
 const getTodoList = async (db: Pool) => {
-  const { rows } = await db.query<TodoItem>('SELECT * FROM public.todo_items WHERE deleted_at IS NULL')
+  const { rows } = await db.query<TodoItem>('SELECT * FROM public.todo_items WHERE deleted_at IS NULL ORDER BY id DESC')
   return rows.map((row) => camelize(row))
 }
 

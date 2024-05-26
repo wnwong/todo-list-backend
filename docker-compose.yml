@@ -17,7 +17,7 @@ services:
       - POSTGRES_DB=$POSTGRESDB_DATABASE
       - POSTGRES_HOST=$POSTGRESDB_HOST
     ports:
-      - $APP_LOCAL_PORT:3000
+      - $APP_LOCAL_PORT:3001
   db:
     image: postgres
     restart: unless-stopped
