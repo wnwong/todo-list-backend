@@ -1,3 +1,4 @@
+import cors from 'cors'
 import express, { Express, json, Request, Response } from 'express'
 import { Pool } from 'pg'
 
@@ -8,6 +9,7 @@ import routes from './routes'
 
 const initServer = (port: number, db: Pool) => {
   const app: Express = express()
+  app.use(cors())
   app.use(json())
 
   app.set('dbPool', db)
