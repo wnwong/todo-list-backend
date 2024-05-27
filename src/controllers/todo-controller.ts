@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { Pool } from 'pg'
+import { Logger } from 'pino'
 
 import * as TodoService from '@/services/todo-service'
 
@@ -23,8 +24,10 @@ interface UpdateTodoItemRequest<T> extends Request {
 const getTodoList = async (req: Request, res: Response) => {
   const { app } = req
   const db = app.get('dbPool') as Pool
+  const logger = app.get('logger') as Logger
   try {
     const todoList = await TodoService.getTodoList(db)
+    logger.info(`Retrieved ${todoList.length} todo items`)
     return res.json({ status: 'success', data: todoList })
   } catch (e) {
     res.status(500)

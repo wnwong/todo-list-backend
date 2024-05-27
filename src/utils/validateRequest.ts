@@ -11,9 +11,11 @@ const validateData = (schema: z.ZodObject<any, any>) => {
         const errorMessages = error.errors.map((issue: ZodIssue) => ({
           message: `${issue.path.join('.')} is ${issue.message}`,
         }))
-        res.status(400).json({ error: 'Invalid data', details: errorMessages })
+        res.status(400)
+        res.json({ error: 'Invalid data', details: errorMessages })
       } else {
-        res.status(500).json({ error: 'Internal Server Error' })
+        res.status(500)
+        res.json({ error: 'Internal Server Error' })
       }
     }
   }

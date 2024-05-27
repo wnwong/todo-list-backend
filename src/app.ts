@@ -1,18 +1,22 @@
 import cors from 'cors'
 import express, { Express, json, Request, Response } from 'express'
 import { Pool } from 'pg'
+import pino from 'pino'
+import httpLogger from 'pino-http'
 
 import config from '@/config'
 import { connect } from '@/services/postgres-service'
 
 import routes from './routes'
 
+const logger = pino({ name: 'server start' })
 const initServer = (port: number, db: Pool) => {
   const app: Express = express()
+  app.use(httpLogger())
   app.use(cors())
   app.use(json())
-
   app.set('dbPool', db)
+  app.set('logger', logger)
 
   app.use('/v1', routes)
 
@@ -22,7 +26,7 @@ const initServer = (port: number, db: Pool) => {
   })
 
   app.listen(port, () => {
-    console.log(`server is running on http://localhost:${port}`)
+    logger.info(`server is running on http://localhost:${port}`)
   })
 }
 const initDB = (host: string, user: string, password: string, port: number, dbDatabase: string) => {
@@ -41,6 +45,6 @@ try {
   initServer(port, db)
 } catch (e) {
   if (e instanceof Error) {
-    console.error('error initdb', e.message)
+    logger.error('error initdb', e.message)
   }
 }
