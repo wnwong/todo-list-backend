@@ -4,7 +4,6 @@ import { Pool } from 'pg'
 export interface TodoItem {
   id: number
   name: string
-  completed: boolean
   createdAt: Date
   updatedAt: Date
 }
@@ -24,12 +23,13 @@ const createTodoItem = async (db: Pool, name: string) => {
   return rowCount
 }
 
-const updateTodoItem = async (db: Pool, name: string, completed: boolean, id: number) => {
+const updateTodoItem = async (db: Pool, name: string, id: number) => {
   const query = {
     name: 'update-todo',
-    text: 'UPDATE public.todo_items SET name = $1, completed = $2 WHERE id = $3 AND deleted_at IS NULL',
-    values: [name, completed, id],
+    text: 'UPDATE public.todo_items SET name = $1 WHERE id = $2 AND deleted_at IS NULL',
+    values: [name, id],
   }
+  console.log(`UPDATE public.todo_items SET name = '${name}', WHERE id = ${id} AND deleted_at IS NULL`)
   const { rowCount } = await db.query<TodoItem>(query)
   return rowCount
 }

@@ -10,7 +10,6 @@ interface CreateTodoItem {
 
 interface UpdateTodoItem {
   name: string
-  completed: boolean
 }
 
 interface CreateTodoItemRequest<T> extends Request {
@@ -63,10 +62,10 @@ const updateTodoItem = async (req: UpdateTodoItemRequest<UpdateTodoItem>, res: R
     app,
     params: { id },
   } = req
-  const { name, completed } = req.body
+  const { name } = req.body
   const db = app.get('dbPool') as Pool
   try {
-    const rowCount = await todoService.updateTodoItem(db, name, completed, Number(id))
+    const rowCount = await todoService.updateTodoItem(db, name, Number(id))
     res.status(200)
     return res.json({ status: API_RESPONSE_STATUS.success, message: `updated ${rowCount} records` })
   } catch (e) {
