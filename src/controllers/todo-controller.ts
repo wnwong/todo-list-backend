@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import { Pool } from 'pg'
-import { Logger } from 'pino'
 
-import * as TodoService from '@/services/todo-service'
+import { API_RESPONSE_STATUS, ERROR_MSG } from '@/lib/constants'
+import * as todoService from '@/services/todo-service'
 
 interface CreateTodoItem {
   name: string
@@ -24,34 +24,37 @@ interface UpdateTodoItemRequest<T> extends Request {
 const getTodoList = async (req: Request, res: Response) => {
   const { app } = req
   const db = app.get('dbPool') as Pool
-  const logger = app.get('logger') as Logger
   try {
-    const todoList = await TodoService.getTodoList(db)
-    logger.info(`Retrieved ${todoList.length} todo items`)
-    return res.json({ status: 'success', data: todoList })
+    const todoList = await todoService.getTodoList(db)
+    res.status(200)
+    return res.json({ status: API_RESPONSE_STATUS.success, data: todoList })
   } catch (e) {
-    res.status(500)
     if (e instanceof Error) {
-      return res.json({ status: 'failed', message: e.message })
+      res.status(400)
+      return res.json({ status: API_RESPONSE_STATUS.failed, message: e.message })
     }
-    return res.json({ status: 'failed', message: 'unknown failure' })
+    res.status(500)
+    return res.json({ status: API_RESPONSE_STATUS.failed, message: ERROR_MSG.unknownFailure })
   }
 }
 
 const createTodoItem = async (req: CreateTodoItemRequest<CreateTodoItem>, res: Response) => {
-  const { app } = req
-  const { name } = req.body
+  const {
+    app,
+    body: { name },
+  } = req
   const db = app.get('dbPool') as Pool
   try {
-    await TodoService.createTodoItem(db, name)
+    await todoService.createTodoItem(db, name)
     res.status(201)
-    return res.json({ status: 'success' })
+    return res.json({ status: API_RESPONSE_STATUS.success })
   } catch (e) {
-    res.status(500)
     if (e instanceof Error) {
-      return res.json({ status: 'failed', message: e.message })
+      res.status(400)
+      return res.json({ status: API_RESPONSE_STATUS.failed, message: e.message })
     }
-    return res.json({ status: 'failed', message: 'unknown failure' })
+    res.status(500)
+    return res.json({ status: API_RESPONSE_STATUS.failed, message: ERROR_MSG.unknownFailure })
   }
 }
 
@@ -63,14 +66,16 @@ const updateTodoItem = async (req: UpdateTodoItemRequest<UpdateTodoItem>, res: R
   const { name, completed } = req.body
   const db = app.get('dbPool') as Pool
   try {
-    const rowCount = await TodoService.updateTodoItem(db, name, completed, Number(id))
-    return res.json({ status: 'success', message: `updated ${rowCount} records` })
+    const rowCount = await todoService.updateTodoItem(db, name, completed, Number(id))
+    res.status(200)
+    return res.json({ status: API_RESPONSE_STATUS.success, message: `updated ${rowCount} records` })
   } catch (e) {
-    res.status(500)
     if (e instanceof Error) {
-      return res.json({ status: 'failed', message: e.message })
+      res.status(400)
+      return res.json({ status: API_RESPONSE_STATUS.failed, message: e.message })
     }
-    return res.json({ status: 'failed', message: 'unknown failure' })
+    res.status(500)
+    return res.json({ status: API_RESPONSE_STATUS.failed, message: ERROR_MSG.unknownFailure })
   }
 }
 
@@ -81,14 +86,16 @@ const deleteTodoItem = async (req: Request, res: Response) => {
   } = req
   const db = app.get('dbPool') as Pool
   try {
-    await TodoService.deleteTodoItem(db, Number(id))
-    return res.json({ status: 'success' })
+    await todoService.deleteTodoItem(db, Number(id))
+    res.status(200)
+    return res.json({ status: API_RESPONSE_STATUS.success })
   } catch (e) {
-    res.status(500)
     if (e instanceof Error) {
-      return res.json({ status: 'failed', message: e.message })
+      res.status(400)
+      return res.json({ status: API_RESPONSE_STATUS.failed, message: e.message })
     }
-    return res.json({ status: 'failed', message: 'unknown failure' })
+    res.status(500)
+    return res.json({ status: API_RESPONSE_STATUS.failed, message: ERROR_MSG.unknownFailure })
   }
 }
 

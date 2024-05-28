@@ -7,6 +7,7 @@ import httpLogger from 'pino-http'
 import config from '@/config'
 import { connect } from '@/services/postgres-service'
 
+import { ERROR_MSG } from './lib/constants'
 import routes from './routes'
 
 const logger = pino({ name: 'server start' })
@@ -22,11 +23,12 @@ const initServer = (port: number, db: Pool) => {
 
   app.use((_req: Request, res: Response) => {
     res.status(404)
-    return res.json({ success: false, data: { message: 'Invalid API Call' } })
+    return res.json({ success: false, data: { message: ERROR_MSG.invalidApiCall } })
   })
 
+  const serverHost = config.basicConfig.serverHost
   app.listen(port, () => {
-    logger.info(`server is running on http://localhost:${port}`)
+    logger.info(`server is running on ${serverHost}:${port}`)
   })
 }
 const initDB = (host: string, user: string, password: string, port: number, dbDatabase: string) => {

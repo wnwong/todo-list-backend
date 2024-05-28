@@ -1,7 +1,7 @@
 import { RequestHandler, Router } from 'express'
 
 import { createTodoItem, deleteTodoItem, getTodoList, updateTodoItem } from '@/controllers/todo-controller'
-import { validateData } from '@/utils/validateRequest'
+import { validateData } from '@/lib/validate-request'
 
 import { createTodoSchema, updateTodoSchema } from './schema'
 

@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import { z, ZodError, ZodIssue } from 'zod'
 
+import { ERROR_MSG } from './constants'
+
 const validateData = (schema: z.ZodObject<any, any>) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -12,10 +14,10 @@ const validateData = (schema: z.ZodObject<any, any>) => {
           message: `${issue.path.join('.')} is ${issue.message}`,
         }))
         res.status(400)
-        res.json({ error: 'Invalid data', details: errorMessages })
+        res.json({ error: ERROR_MSG.invalidData, details: errorMessages })
       } else {
         res.status(500)
-        res.json({ error: 'Internal Server Error' })
+        res.json({ error: ERROR_MSG.invalidData })
       }
     }
   }

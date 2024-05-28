@@ -4,6 +4,7 @@ export interface Config {
 }
 
 export interface BasicConfig {
+  serverHost: string
   serverPort: number
 }
 
@@ -41,6 +42,7 @@ const getProcessEnv = (envName: string, defaultVal?: string): string => {
 }
 
 const basicConfig: BasicConfig = {
+  serverHost: getProcessEnv('SERVER_HOST', 'http://localhost'),
   serverPort: Number(getProcessEnv('SERVER_PORT', '3000')),
 }
 
