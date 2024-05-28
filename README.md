@@ -54,6 +54,40 @@ This project uses Jest for unit testing. To run the tests, execute:
 npm test
 ```
 
+## APIs
+
+### Get Todo List
+
+```http
+GET /v1/todos
+```
+
+### Create Todo Item
+
+```http
+POST /v1/todos
+```
+
+| Body   | Type     | Validation           |
+| :----- | :------- | :------------------- |
+| `name` | `string` | size <=50 characters |
+
+### Update Todo Item
+
+```http
+PUT /v1/todos/:id
+```
+
+| Body   | Type     | Validation           |
+| :----- | :------- | :------------------- |
+| `name` | `string` | size <=50 characters |
+
+### Delete Todo Item
+
+```http
+DELETE /v1/todos/:id
+```
+
 ## Key Dependencies
 
 - [express](https://github.com/expressjs/express)
