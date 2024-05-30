@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
 
-import { createTodoItem, deleteTodoItem, getTodoList, updateTodoItem } from '@/controllers/todo-controller'
-import { API_RESPONSE_STATUS, ERROR_MSG } from '@/lib/constants'
+import { createTodoItem, deleteTodoItem, getTodoList, updateTodoItem } from '@/controllers/v1/todo-controller'
 import * as todoService from '@/services/todo-service'
 import { mockTodoList } from '@/tests/mockData/todo-list'
+import { API_RESPONSE_STATUS, ERROR_MSG } from '@/utils/constants'
 const responseMockFn = jest.fn()
 
 const mockResponse = {

@@ -5,10 +5,9 @@ import pino from 'pino'
 import httpLogger from 'pino-http'
 
 import config from '@/config'
+import { router } from '@/routes'
 import { connect } from '@/services/postgres-service'
-
-import { ERROR_MSG } from './lib/constants'
-import routes from './routes'
+import { ERROR_MSG } from '@/utils/constants'
 
 const logger = pino({ name: 'server start' })
 const initServer = (port: number, db: Pool) => {
@@ -19,7 +18,7 @@ const initServer = (port: number, db: Pool) => {
   app.set('dbPool', db)
   app.set('logger', logger)
 
-  app.use('/v1', routes)
+  app.use('/api', router)
 
   app.use((_req: Request, res: Response) => {
     res.status(404)

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { z, ZodError, ZodIssue } from 'zod'
 
-import { ERROR_MSG } from './constants'
+import { ERROR_MSG } from '@/utils/constants'
 
 const validateData = (schema: z.ZodObject<any, any>) => {
   return (req: Request, res: Response, next: NextFunction) => {

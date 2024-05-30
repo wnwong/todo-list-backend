@@ -1,8 +1,9 @@
-import { Router } from 'express'
+import express, { Router } from 'express'
 
-import todo from './todo'
+import { v1Router } from '@/routes/v1'
 
-const router = Router()
+const router: Router = express.Router()
 
-router.use('/todos', todo)
-export default router
+router.use('/v1', v1Router)
+
+export { router }

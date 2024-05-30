@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import { Pool } from 'pg'
 
-import { API_RESPONSE_STATUS, ERROR_MSG } from '@/lib/constants'
 import * as todoService from '@/services/todo-service'
+import { API_RESPONSE_STATUS, ERROR_MSG } from '@/utils/constants'
 
 interface CreateTodoItem {
   name: string

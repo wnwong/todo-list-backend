@@ -29,7 +29,6 @@ const updateTodoItem = async (db: Pool, name: string, id: number) => {
     text: 'UPDATE public.todo_items SET name = $1 WHERE id = $2 AND deleted_at IS NULL',
     values: [name, id],
   }
-  console.log(`UPDATE public.todo_items SET name = '${name}', WHERE id = ${id} AND deleted_at IS NULL`)
   const { rowCount } = await db.query<TodoItem>(query)
   return rowCount
 }
