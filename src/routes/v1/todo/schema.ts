@@ -1,16 +1,20 @@
 import { z } from 'zod'
 
 const getTodoListSchema = z.object({
-  page: z.coerce.number().positive().default(1),
-  limit: z.coerce.number().positive().default(10),
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).default(10),
 })
 
 const createTodoSchema = z.object({
   name: z.string().max(50),
 })
 
-const updateTodoSchema = z.object({
+const updateTodoNameSchema = z.object({
   name: z.string().max(50),
 })
 
-export { createTodoSchema, getTodoListSchema, updateTodoSchema }
+const updateTodoCompletedSchema = z.object({
+  completed: z.boolean(),
+})
+
+export { createTodoSchema, getTodoListSchema, updateTodoCompletedSchema, updateTodoNameSchema }

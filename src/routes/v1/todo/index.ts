@@ -1,9 +1,15 @@
 import { RequestHandler, Router } from 'express'
 
-import { createTodoItem, deleteTodoItem, getTodoList, updateTodoItem } from '@/controllers/v1/todo-controller'
+import {
+  createTodoItem,
+  deleteTodoItem,
+  getTodoList,
+  updateTodoItemCompleted,
+  updateTodoItemName,
+} from '@/controllers/v1/todo-controller'
 import { validateData } from '@/utils/validate-request'
 
-import { createTodoSchema, getTodoListSchema, updateTodoSchema } from './schema'
+import { createTodoSchema, getTodoListSchema, updateTodoCompletedSchema, updateTodoNameSchema } from './schema'
 
 const todoRouter: Router = Router()
 
@@ -19,7 +25,7 @@ const todoRouter: Router = Router()
  *         name: page
  *         schema:
  *           type: integer
- *           default: 0
+ *           default: 1
  *       - in: query
  *         name: limit
  *         schema:
@@ -83,8 +89,8 @@ todoRouter.get('/', validateData(undefined, getTodoListSchema), getTodoList as R
 todoRouter.post('/', validateData(createTodoSchema), createTodoItem as RequestHandler)
 /**
  * @swagger
- * /api/v1/todos/{id}:
- *   put:
+ * /api/v1/todos/{id}/name:
+ *   patch:
  *     summary: Update Todo Item
  *     tags:
  *       - Todos
@@ -99,14 +105,14 @@ todoRouter.post('/', validateData(createTodoSchema), createTodoItem as RequestHa
  *       content:
  *         application/json:
  *           schema:
- *             $ref: "#/components/schemas/UpdateTodoRequest"
+ *             $ref: "#/components/schemas/UpdateTodoNameRequest"
  *     responses:
  *       "200":
  *         description: Successful response
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/UpdateTodoItemResponse"
+ *               $ref: "#/components/schemas/updateTodoItemNameResponse"
  *       "400":
  *         description: Bad request
  *         content:
@@ -120,7 +126,47 @@ todoRouter.post('/', validateData(createTodoSchema), createTodoItem as RequestHa
  *             schema:
  *               $ref: "#/components/schemas/ErrorResponse"
  */
-todoRouter.put('/:id', validateData(updateTodoSchema), updateTodoItem as RequestHandler)
+todoRouter.patch('/:id/name', validateData(updateTodoNameSchema), updateTodoItemName as RequestHandler)
+/**
+ * @swagger
+ * /api/v1/todos/{id}/completed:
+ *   patch:
+ *     summary: Update Todo Item
+ *     tags:
+ *       - Todos
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/UpdateTodoCompletedRequest"
+ *     responses:
+ *       "200":
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/updateTodoItemNameResponse"
+ *       "400":
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ *       "500":
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ErrorResponse"
+ */
+todoRouter.patch('/:id/completed', validateData(updateTodoCompletedSchema), updateTodoItemCompleted as RequestHandler)
 /**
  * @swagger
  * /api/v1/todos/{id}:
@@ -196,14 +242,21 @@ todoRouter.delete('/:id', deleteTodoItem as RequestHandler)
  *       properties:
  *         name:
  *           type: string
- *     UpdateTodoRequest:
+ *     UpdateTodoNameRequest:
  *       type: object
  *       required:
  *         - name
  *       properties:
  *         name:
  *           type: string
- *     UpdateTodoItemResponse:
+ *     UpdateTodoCompletedRequest:
+ *       type: object
+ *       required:
+ *         - completed
+ *       properties:
+ *         completed:
+ *           type: boolean
+ *     updateTodoItemNameResponse:
  *       type: object
  *       properties:
  *         status:

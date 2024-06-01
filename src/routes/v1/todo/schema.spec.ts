@@ -1,4 +1,4 @@
-import { createTodoSchema, getTodoListSchema, updateTodoSchema } from './schema'
+import { createTodoSchema, getTodoListSchema, updateTodoCompletedSchema, updateTodoNameSchema } from './schema'
 
 describe('todoSchema', () => {
   describe('getTodoListSchema', () => {
@@ -31,15 +31,29 @@ describe('todoSchema', () => {
     })
   })
 
-  describe('updateTodoSchema', () => {
+  describe('updateTodoNameSchema', () => {
     it.each`
       input                                                                         | expected
       ${{ name: 'I go to school by bus' }}
       ${true}
       ${{ name: 'I am some really long text which exceed the allowed size limit' }}
       ${false}
-    `('should returns $expected in updateTodoSchema check for $input', ({ input, expected }) => {
-      expect(updateTodoSchema.safeParse(input).success).toBe(expected)
+    `('should returns $expected in updateTodoNameSchema check for $input', ({ input, expected }) => {
+      expect(updateTodoNameSchema.safeParse(input).success).toBe(expected)
+    })
+  })
+
+  describe('updateTodoCompletedSchema', () => {
+    it.each`
+      input                   | expected
+      ${{ completed: true }}
+      ${true}
+      ${{ completed: false }}
+      ${true}
+      ${{ unknown: 'abc' }}
+      ${false}
+    `('should returns $expected in updateTodoCompletedSchema check for $input', ({ input, expected }) => {
+      expect(updateTodoCompletedSchema.safeParse(input).success).toBe(expected)
     })
   })
 })

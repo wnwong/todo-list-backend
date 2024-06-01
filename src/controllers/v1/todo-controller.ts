@@ -8,8 +8,12 @@ interface CreateTodoItem {
   name: string
 }
 
-interface UpdateTodoItem {
+interface UpdateTodoItemName {
   name: string
+}
+
+interface UpdateTodoItemCompleted {
+  completed: true
 }
 
 interface CreateTodoItemRequest<T> extends Request {
@@ -60,7 +64,7 @@ const createTodoItem = async (req: CreateTodoItemRequest<CreateTodoItem>, res: R
   }
 }
 
-const updateTodoItem = async (req: UpdateTodoItemRequest<UpdateTodoItem>, res: Response) => {
+const updateTodoItemName = async (req: UpdateTodoItemRequest<UpdateTodoItemName>, res: Response) => {
   const {
     app,
     params: { id },
@@ -68,7 +72,28 @@ const updateTodoItem = async (req: UpdateTodoItemRequest<UpdateTodoItem>, res: R
   const { name } = req.body
   const db = app.get('dbPool') as Pool
   try {
-    const rowCount = await todoService.updateTodoItem(db, name, Number(id))
+    const rowCount = await todoService.updateTodoItemName(db, name, Number(id))
+    res.status(200)
+    return res.json({ status: API_RESPONSE_STATUS.success, message: `updated ${rowCount} records` })
+  } catch (e) {
+    if (e instanceof Error) {
+      res.status(400)
+      return res.json({ status: API_RESPONSE_STATUS.failed, message: e.message })
+    }
+    res.status(500)
+    return res.json({ status: API_RESPONSE_STATUS.failed, message: ERROR_MSG.unknownFailure })
+  }
+}
+
+const updateTodoItemCompleted = async (req: UpdateTodoItemRequest<UpdateTodoItemCompleted>, res: Response) => {
+  const {
+    app,
+    params: { id },
+  } = req
+  const { completed } = req.body
+  const db = app.get('dbPool') as Pool
+  try {
+    const rowCount = await todoService.updateTodoItemCompleted(db, completed, Number(id))
     res.status(200)
     return res.json({ status: API_RESPONSE_STATUS.success, message: `updated ${rowCount} records` })
   } catch (e) {
@@ -101,4 +126,4 @@ const deleteTodoItem = async (req: Request, res: Response) => {
   }
 }
 
-export { createTodoItem, deleteTodoItem, getTodoList, updateTodoItem }
+export { createTodoItem, deleteTodoItem, getTodoList, updateTodoItemCompleted, updateTodoItemName }

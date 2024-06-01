@@ -2,7 +2,13 @@ import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ParsedQs } from 'qs'
 
-import { createTodoItem, deleteTodoItem, getTodoList, updateTodoItem } from '@/controllers/v1/todo-controller'
+import {
+  createTodoItem,
+  deleteTodoItem,
+  getTodoList,
+  updateTodoItemCompleted,
+  updateTodoItemName,
+} from '@/controllers/v1/todo-controller'
 import * as todoService from '@/services/todo-service'
 import { mockTodoList } from '@/tests/mockData/todo-list'
 import { API_RESPONSE_STATUS, ERROR_MSG } from '@/utils/constants'
@@ -17,7 +23,8 @@ jest.mock<typeof todoService>('@/services/todo-service', () => {
   return {
     getTodoList: jest.fn(),
     createTodoItem: jest.fn(),
-    updateTodoItem: jest.fn(),
+    updateTodoItemName: jest.fn(),
+    updateTodoItemCompleted: jest.fn(),
     deleteTodoItem: jest.fn(),
   }
 })
@@ -99,7 +106,7 @@ describe('todo-controller', () => {
     })
   })
 
-  describe('updateTodoItem', () => {
+  describe('updateTodoItemName', () => {
     const mockRequest = {
       app: { get: jest.fn() },
       body: { name: 'new todo item' },
@@ -108,10 +115,10 @@ describe('todo-controller', () => {
 
     it('should return status 200 when item updated successfully', async () => {
       const rowCount = 2
-      ;(todoService.updateTodoItem as jest.Mock).mockImplementation(() => {
+      ;(todoService.updateTodoItemName as jest.Mock).mockImplementation(() => {
         return rowCount
       }),
-        await updateTodoItem(mockRequest, mockResponse)
+        await updateTodoItemName(mockRequest, mockResponse)
       expect(responseMockFn).toHaveBeenNthCalledWith(1, 200)
       expect(responseMockFn).toHaveBeenNthCalledWith(2, {
         status: API_RESPONSE_STATUS.success,
@@ -121,19 +128,62 @@ describe('todo-controller', () => {
 
     it('should return status 400', async () => {
       const errorMsg = 'Unexpected error'
-      ;(todoService.updateTodoItem as jest.Mock).mockImplementation(() => {
+      ;(todoService.updateTodoItemName as jest.Mock).mockImplementation(() => {
         throw new Error(errorMsg)
       }),
-        await updateTodoItem(mockRequest, mockResponse)
+        await updateTodoItemName(mockRequest, mockResponse)
       expect(responseMockFn).toHaveBeenNthCalledWith(1, 400)
       expect(responseMockFn).toHaveBeenNthCalledWith(2, { status: API_RESPONSE_STATUS.failed, message: errorMsg })
     })
 
     it('should return status 500', async () => {
-      ;(todoService.updateTodoItem as jest.Mock).mockImplementation(() => {
+      ;(todoService.updateTodoItemName as jest.Mock).mockImplementation(() => {
         throw 'something'
       }),
-        await updateTodoItem(mockRequest, mockResponse)
+        await updateTodoItemName(mockRequest, mockResponse)
+      expect(responseMockFn).toHaveBeenNthCalledWith(1, 500)
+      expect(responseMockFn).toHaveBeenNthCalledWith(2, {
+        status: API_RESPONSE_STATUS.failed,
+        message: ERROR_MSG.unknownFailure,
+      })
+    })
+  })
+
+  describe('updateTodoItemCompleted', () => {
+    const mockRequest = {
+      app: { get: jest.fn() },
+      body: { completed: true },
+      params: { id: 2 },
+    } as unknown as Request
+
+    it('should return status 200 when item updated successfully', async () => {
+      const rowCount = 2
+      ;(todoService.updateTodoItemCompleted as jest.Mock).mockImplementation(() => {
+        return rowCount
+      }),
+        await updateTodoItemCompleted(mockRequest, mockResponse)
+      expect(responseMockFn).toHaveBeenNthCalledWith(1, 200)
+      expect(responseMockFn).toHaveBeenNthCalledWith(2, {
+        status: API_RESPONSE_STATUS.success,
+        message: `updated ${rowCount} records`,
+      })
+    })
+
+    it('should return status 400', async () => {
+      const errorMsg = 'Unexpected error'
+      ;(todoService.updateTodoItemCompleted as jest.Mock).mockImplementation(() => {
+        throw new Error(errorMsg)
+      }),
+        await updateTodoItemCompleted(mockRequest, mockResponse)
+      expect(responseMockFn).toHaveBeenNthCalledWith(1, 400)
+      expect(responseMockFn).toHaveBeenNthCalledWith(2, { status: API_RESPONSE_STATUS.failed, message: errorMsg })
+    })
+
+    it('should return status 500', async () => {
+      ;(todoService.updateTodoItemCompleted as jest.Mock).mockImplementation(() => {
+        throw 'something'
+      }),
+        await updateTodoItemCompleted(mockRequest, mockResponse)
       expect(responseMockFn).toHaveBeenNthCalledWith(1, 500)
       expect(responseMockFn).toHaveBeenNthCalledWith(2, {
         status: API_RESPONSE_STATUS.failed,
@@ -148,7 +198,7 @@ describe('todo-controller', () => {
       params: { id: 2 },
     } as unknown as Request
 
-    it('should return status 200 when item updated successfully', async () => {
+    it('should return status 200 when item deleted successfully', async () => {
       ;(todoService.deleteTodoItem as jest.Mock).mockImplementation(() => {
         return
       }),
