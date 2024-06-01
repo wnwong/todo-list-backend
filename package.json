@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.ts",
   "engines": {
-    "node": "20.x"
+    "node": ">20.13.1"
   },
   "scripts": {
     "dev": "tsx watch --clear-screen=false src/app.ts",
@@ -14,6 +14,7 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "prepare": "husky"
   },
   "author": "",
