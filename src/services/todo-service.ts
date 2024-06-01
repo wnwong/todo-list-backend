@@ -27,7 +27,7 @@ const getTodoList = async (db: Pool, page: number = 1, limit: number = 10) => {
 
   const totalPages = countRows[0].count ? Math.ceil(countRows[0].count / limit) : 1
   return {
-    data: rows.map((row) => camelize(row)),
+    todoList: rows.map((row) => camelize(row)),
     totalPages,
   }
 }

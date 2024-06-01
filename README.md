@@ -30,7 +30,7 @@ docker-compose up db
 
 ### Database Schema Migration
 
-Execute the below sql with any DB client
+Execute the below sql with a postgres DB client
 
 ```
 database/create_todo_items_table.sql
@@ -64,38 +64,10 @@ or
 npm run test:coverage
 ```
 
-## APIs
+## API Doc
 
-### Get Todo List
-
-```http
-GET /v1/todos
 ```
-
-### Create Todo Item
-
-```http
-POST /v1/todos
-```
-
-| Body   | Type     | Validation           |
-| :----- | :------- | :------------------- |
-| `name` | `string` | size <=50 characters |
-
-### Update Todo Item
-
-```http
-PUT /v1/todos/:id
-```
-
-| Body   | Type     | Validation           |
-| :----- | :------- | :------------------- |
-| `name` | `string` | size <=50 characters |
-
-### Delete Todo Item
-
-```http
-DELETE /v1/todos/:id
+http://{server host}:{server port}/api-doc
 ```
 
 ## Key Dependencies
@@ -109,3 +81,4 @@ DELETE /v1/todos/:id
 - [prettier](https://github.com/prettier/prettier)
 - [jest](https://github.com/jestjs/jest)
 - [pino](https://github.com/pinojs/pino)
+- [swagger](https://github.com/swagger-api/swagger-ui)

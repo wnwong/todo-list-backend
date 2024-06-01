@@ -3,11 +3,14 @@ import express, { Express, json, Request, Response } from 'express'
 import { Pool } from 'pg'
 import pino from 'pino'
 import httpLogger from 'pino-http'
+import swaggerUi from 'swagger-ui-express'
 
 import config from '@/config'
 import { router } from '@/routes'
 import { connect } from '@/services/postgres-service'
 import { ERROR_MSG } from '@/utils/constants'
+
+import swaggerSpec from './swagger'
 
 const logger = pino({ name: 'server start' })
 const initServer = (port: number, db: Pool) => {
@@ -17,6 +20,8 @@ const initServer = (port: number, db: Pool) => {
   app.use(json())
   app.set('dbPool', db)
   app.set('logger', logger)
+
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
   app.use('/api', router)
 
