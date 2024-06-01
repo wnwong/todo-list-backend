@@ -16,13 +16,19 @@ This is the backend service for a Todo List application, built using Node.js, Ex
 npm install
 ```
 
+### Environmental Variables
+
+```
+cp .env.shcema .env
+```
+
 ### Start Postgres Database
 
 ```
 docker-compose up db
 ```
 
-### Database Schema Initial Load
+### Database Schema Migration
 
 Execute the below sql with any DB client
 
@@ -51,7 +57,11 @@ docker-compose up -d
 This project uses Jest for unit testing. To run the tests, execute:
 
 ```
-npm test
+npm run test
+
+or
+
+npm run test:coverage
 ```
 
 ## APIs
@@ -98,3 +108,4 @@ DELETE /v1/todos/:id
 - [husky](https://github.com/typicode/husky)
 - [prettier](https://github.com/prettier/prettier)
 - [jest](https://github.com/jestjs/jest)
+- [pino](https://github.com/pinojs/pino)
