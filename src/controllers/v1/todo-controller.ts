@@ -21,10 +21,13 @@ interface UpdateTodoItemRequest<T> extends Request {
 }
 
 const getTodoList = async (req: Request, res: Response) => {
-  const { app } = req
+  const {
+    app,
+    query: { page = 0, limit = 10 },
+  } = req
   const db = app.get('dbPool') as Pool
   try {
-    const todoList = await todoService.getTodoList(db)
+    const todoList = await todoService.getTodoList(db, Number(page), Number(limit))
     res.status(200)
     return res.json({ status: API_RESPONSE_STATUS.success, data: todoList })
   } catch (e) {

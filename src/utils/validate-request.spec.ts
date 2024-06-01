@@ -27,6 +27,37 @@ describe('validate-request', () => {
       expect(responseMockFn).toHaveBeenCalledTimes(0)
     })
 
+    it('should proceed next with valid request params', () => {
+      const mockRequest = {
+        params: { page: '1' },
+      } as unknown as Request
+      const schema = z.object({
+        page: z.string(),
+      })
+      const middleware = validateData(undefined, schema)
+      middleware(mockRequest, mockResponse, mockNext)
+      expect(mockNext).toHaveBeenCalled()
+      expect(responseMockFn).toHaveBeenCalledTimes(0)
+    })
+
+    it('should proceed next with both valid request body and params', () => {
+      const mockRequest = {
+        params: { page: '1' },
+        body: { name: 'peter' },
+      } as unknown as Request
+      const bodySchema = z.object({
+        name: z.string(),
+      })
+
+      const paramsSchema = z.object({
+        page: z.string(),
+      })
+      const middleware = validateData(bodySchema, paramsSchema)
+      middleware(mockRequest, mockResponse, mockNext)
+      expect(mockNext).toHaveBeenCalled()
+      expect(responseMockFn).toHaveBeenCalledTimes(0)
+    })
+
     it('should return status 400 error with invalid request body', () => {
       const mockRequest = {
         body: { name: 'abcde' },

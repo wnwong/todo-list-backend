@@ -4,13 +4,32 @@ import { Pool } from 'pg'
 export interface TodoItem {
   id: number
   name: string
-  createdAt: Date
-  updatedAt: Date
 }
 
-const getTodoList = async (db: Pool) => {
-  const { rows } = await db.query<TodoItem>('SELECT * FROM public.todo_items WHERE deleted_at IS NULL ORDER BY id DESC')
-  return rows.map((row) => camelize(row))
+export interface TodoItemCounts {
+  count: number
+}
+
+const getTodoList = async (db: Pool, page: number = 1, limit: number = 10) => {
+  const offset = (page - 1) * limit
+  const countQuery = {
+    name: 'count-todo',
+    text: 'SELECT count(*) AS count FROM public.todo_items WHERE deleted_at IS NULL',
+    values: [],
+  }
+  const { rows: countRows } = await db.query<TodoItemCounts>(countQuery)
+  const query = {
+    name: 'query-todo',
+    text: 'SELECT id, name FROM public.todo_items WHERE deleted_at IS NULL ORDER BY id DESC LIMIT $1 OFFSET $2',
+    values: [limit, offset],
+  }
+  const { rows } = await db.query<TodoItem>(query)
+
+  const totalPages = countRows[0].count ? Math.ceil(countRows[0].count / limit) : 1
+  return {
+    data: rows.map((row) => camelize(row)),
+    totalPages,
+  }
 }
 
 const createTodoItem = async (db: Pool, name: string) => {

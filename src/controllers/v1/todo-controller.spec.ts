@@ -1,4 +1,6 @@
 import { Request, Response } from 'express'
+import { ParamsDictionary } from 'express-serve-static-core'
+import { ParsedQs } from 'qs'
 
 import { createTodoItem, deleteTodoItem, getTodoList, updateTodoItem } from '@/controllers/v1/todo-controller'
 import * as todoService from '@/services/todo-service'
@@ -22,10 +24,14 @@ jest.mock<typeof todoService>('@/services/todo-service', () => {
 
 describe('todo-controller', () => {
   describe('getTodoList', () => {
-    it('should return status 200 with todo list', async () => {
-      const mockRequest = {
+    let mockRequest: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>
+    beforeEach(() => {
+      mockRequest = {
         app: { get: jest.fn() },
+        query: { page: 0, limit: 10 },
       } as unknown as Request
+    })
+    it('should return status 200 with todo list', async () => {
       ;(todoService.getTodoList as jest.Mock).mockImplementation(() => {
         return mockTodoList
       }),
@@ -34,9 +40,6 @@ describe('todo-controller', () => {
     })
 
     it('should return status 400', async () => {
-      const mockRequest = {
-        app: { get: jest.fn() },
-      } as unknown as Request
       const errorMsg = 'Unexpected error'
       ;(todoService.getTodoList as jest.Mock).mockImplementation(() => {
         throw new Error(errorMsg)
@@ -47,9 +50,6 @@ describe('todo-controller', () => {
     })
 
     it('should return status 500', async () => {
-      const mockRequest = {
-        app: { get: jest.fn() },
-      } as unknown as Request
       ;(todoService.getTodoList as jest.Mock).mockImplementation(() => {
         throw 'something'
       }),

@@ -3,10 +3,15 @@ import { z, ZodError, ZodIssue } from 'zod'
 
 import { ERROR_MSG } from '@/utils/constants'
 
-const validateData = (schema: z.ZodObject<any, any>) => {
+const validateData = (bodySchema?: z.ZodObject<any, any>, paramsSchema?: z.ZodObject<any, any>) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      schema.parse(req.body)
+      if (bodySchema) {
+        bodySchema.parse(req.body)
+      }
+      if (paramsSchema) {
+        paramsSchema.parse(req.params)
+      }
       next()
     } catch (error) {
       if (error instanceof ZodError) {
